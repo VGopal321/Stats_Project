@@ -1,0 +1,33 @@
+{r}
+library(ggplot2)
+library(dplyr)
+
+
+#set directory for desktop
+# setwd("/Users/apple/Desktop/Project 1/")
+
+#reading in the csvs
+test = read.csv("./Data Files/test.csv") #read test.csv
+train = read.csv("./Data Files/train.csv") #read train.csv
+#GrLivArea: Above grade (ground) living area square feet
+
+fit = lm(SalePrice~GrLivArea, data= train)
+summary(fit)
+
+bb <- train %>% ggplot(aes(x = GrLivArea, y=SalePrice, color = GrLivArea)) + geom_point(aes(fill=GrLivArea),pch=21,size=3,colour="black")+ ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+ geom_smooth(method='lm', formula= y~x, color="black")
+bb 
+
+train$res <- resid(fit)
+
+myhist <- hist(train$res, col="lightblue", main="Histogram of Residuals", xlab="Residuals")
+multiplier <- myhist$counts / myhist$density
+mydensity <- density(train$res)
+mydensity$y <- mydensity$y * multiplier[1]
+
+myx <- seq(min(train$res), max(train$res), length.out= 100)
+mymean <- mean(train$res)
+mysd <- sd(train$res)
+
+normal <- dnorm(x = myx, mean = mymean, sd = mysd)
+lines(myx, normal * multiplier[1], col = "blue", lwd = 2)
+{r}
