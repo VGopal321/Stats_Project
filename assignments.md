@@ -1,6 +1,6 @@
 
 ## ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
--[ ] Restatement of Problem Build and Fit the Model Checking Assumptions
+- [ ] Restatement of Problem Build and Fit the Model Checking Assumptions
 	- [ ]  Residual Plots 
 	- [ ]  Influential point analysis (Cook’s D and Leverage) 
 	- [ ]  Make sure to address each assumption. 
