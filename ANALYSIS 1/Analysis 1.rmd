@@ -1,4 +1,11 @@
-{r}
+---
+title: "Analysis 1"
+output: html_document
+date: '2022-07-23'
+---
+
+
+```{r Analysis 1}
 library(ggplot2)
 library(dplyr)
 
@@ -30,4 +37,5 @@ mysd <- sd(train$res)
 
 normal <- dnorm(x = myx, mean = mymean, sd = mysd)
 lines(myx, normal * multiplier[1], col = "blue", lwd = 2)
-{r}
+
+```
