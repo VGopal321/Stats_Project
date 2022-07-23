@@ -1,6 +1,5 @@
-# ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
-#ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage Restatement of Problem Build and Fit the Model Checking Assumptions
 
+# ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
 -[ ] Restatement of Problem Build and Fit the Model Checking Assumptions
 	-[ ]  Residual Plots 
 	-[ ]  Influential point analysis (Cook’s D and Leverage) 
@@ -8,6 +7,7 @@
 	-[ ]  Comparing Competing Models 
 	-[ ]  Adj R2
 	-[ ] Internal CV Press
+	
 # vg-ANALYSIS 2: Build the most predictive model for sales prices of homes in all of Ames Iowa
 -[ ]  Model Selection
 -[ ]  Type of Selection (Stepwise, Forward, Backward, Custom)
