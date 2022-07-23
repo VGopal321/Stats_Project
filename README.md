@@ -95,5 +95,4 @@ Presentation (30%):
 		-No spelling or grammatical errors.  
 Analysis Question 1: (35%)
 Analysis Question 2: (35 %)
-![image](https://user-images.githubusercontent.com/8387327/180610247-81b9b5c2-98a6-4ce0-913c-b93746ce8252.png)
 Rshiny app (10%)
