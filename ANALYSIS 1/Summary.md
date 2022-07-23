@@ -32,6 +32,5 @@ Conclusion
 	
 R Shiny: Price v. Living Area Chart
 
-https://www.kaggle.com/c/house-prices-advanced-regression-techniques![image](https://user-images.githubusercontent.com/8387327/180618031-1c3071da-5e98-4f52-812a-a6aa1c32cd1c.png)
-
+https://www.kaggle.com/c/house-prices-advanced-regression-techniques
 
