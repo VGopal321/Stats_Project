@@ -1,33 +1,33 @@
 
-# ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
+## ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
 -[ ] Restatement of Problem Build and Fit the Model Checking Assumptions
-	-[ ]  Residual Plots 
-	-[ ]  Influential point analysis (Cook’s D and Leverage) 
-	-[ ]  Make sure to address each assumption. 
-	-[ ]  Comparing Competing Models 
-	-[ ]  Adj R2
-	-[ ] Internal CV Press
+	- [ ]  Residual Plots 
+	- [ ]  Influential point analysis (Cook’s D and Leverage) 
+	- [ ]  Make sure to address each assumption. 
+	- [ ]  Comparing Competing Models 
+	- [ ]  Adj R2
+	- [ ] Internal CV Press
 	
-# vg-ANALYSIS 2: Build the most predictive model for sales prices of homes in all of Ames Iowa
--[ ]  Model Selection
--[ ]  Type of Selection (Stepwise, Forward, Backward, Custom)
-	-[ ]  Checking Assumptions 
-		-[ ]  Residual Plots
-		-[ ]  Influential point analysis (Cook’s D and Leverage)
-		-[ ]  Make sure to address each assumption
-	-[ ]  Comparing Competing Models
-		-[ ]  Adj R2   
-		-[ ]  Internal CV Press   
-		-[ ]  Kaggle Score 
-	-[ ]  Conclusion: A short summary of the analysis.  
+## vg-ANALYSIS 2: Build the most predictive model for sales prices of homes in all of Ames Iowa
+- [ ]  Model Selection
+- [ ]  Type of Selection (Stepwise, Forward, Backward, Custom)
+	- [ ]  Checking Assumptions 
+		- [ ]  Residual Plots
+		- [ ]  Influential point analysis (Cook’s D and Leverage)
+		- [ ]  Make sure to address each assumption
+	- [ ]  Comparing Competing Models
+		- [ ]  Adj R2   
+		- [ ]  Internal CV Press   
+		- [ ]  Kaggle Score 
+	- [ ]  Conclusion: A short summary of the analysis.  
 
-# ks-RShiny app 
--[ ] that will display at least display a scatterplot of price of the home v. square footage 
+## ks-RShiny app 
+- [ ] that will display at least display a scatterplot of price of the home v. square footage 
 
 
 
-# (both)Paper
--[ ] Rough draft
+## (both)Paper
+- [ ] Rough draft
 
 Data Description (Where did the data come from? 
 	- How big is it? 
