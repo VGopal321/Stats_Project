@@ -29,6 +29,8 @@
 ## (both)Paper
 - [ ] Rough draft
 
+https://smu365-my.sharepoint.com/:w:/g/personal/kendallscott_smu_edu/EdLcmKJDgj9LvvkbpSHj0BMBY618-mZtWWa6AN0LCurOhg
+
 Data Description (Where did the data come from? 
 	- How big is it? 
 	- How many observations? 
