@@ -1,6 +1,6 @@
 both(clean up/join data)
-ks -<b>ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
-Restatement of Problem Build and Fit the Model Checking Assumptions</b>
+#ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
+Restatement of Problem Build and Fit the Model Checking Assumptions
 
 
 -Residual Plots 
@@ -10,8 +10,8 @@ Restatement of Problem Build and Fit the Model Checking Assumptions</b>
 -Adj R2
 
 -Internal CV Press
-vg-<b>ANALYSIS 2: Build the most predictive model for sales prices of homes in all of Ames Iowa
-Model Selection </b>
+#vg-ANALYSIS 2: Build the most predictive model for sales prices of homes in all of Ames Iowa
+Model Selection
 Type of Selection (Stepwise, Forward, Backward, Custom)
 	Checking Assumptions 
 		-Residual Plots
@@ -23,7 +23,7 @@ Type of Selection (Stepwise, Forward, Backward, Custom)
 		-Kaggle Score 
 Conclusion: A short summary of the analysis.  
 
-ks-RShiny app that will display at least display a scatterplot of price of the home v. square footage 
+#ks-RShiny app that will display at least display a scatterplot of price of the home v. square footage 
 
 
 
