@@ -22,7 +22,7 @@
 	- [ ]  Conclusion: A short summary of the analysis.  
 
 ## ks-RShiny app 
-- [ ] that will display at least display a scatterplot of price of the home v. square footage 
+- [x] that will display at least display a scatterplot of price of the home v. square footage 
 
 
 
