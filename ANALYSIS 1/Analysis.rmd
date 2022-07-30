@@ -1,0 +1,108 @@
+title: "Analysis 1"
+output: html_document
+date: '2022-07-23'
+---
+
+
+```{r Analysis 1}
+library(ggplot2)
+library(dplyr)
+library(scales)
+
+#set directory for desktop
+# setwd("/Users/apple/Desktop/Project 1/")
+
+
+#reading in the csvs
+test = read.csv("./Data Files/test.csv") #read test.csv
+train = read.csv("./Data Files/train.csv") #read train.csv
+#GrLivArea: Above grade (ground) living area square feet
+
+train =train %>%filter(Neighborhood == "NAmes" | Neighborhood == "Edwards" | Neighborhood == "BrkSide" )
+train =train %>%filter(SaleCondition != "Partial" )
+#updating to per 100 sq feet
+train$GrLivArea=train$GrLivArea/100
+
+
+fit = lm(SalePrice~GrLivArea, data= train)
+summary(fit)
+
+train$GrLivArea.log=log(train$GrLivArea)
+train$SalePrice.log=log(train$SalePrice)
+
+
+#graph with sepearate linear regression lines
+bb <- train %>% ggplot(aes(x = GrLivArea.log, y=SalePrice.log)) + geom_point(aes(fill=Neighborhood),pch=21,size=3, alpha=.5)+
+  xlab("Living area 100 Sq Ft.")+
+  ylab("Sales Price")+
+  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
+    scale_y_continuous(label=comma)+
+  geom_smooth(method=lm,se=FALSE,fullrange=TRUE,
+                  aes(color=Neighborhood))
+bb
+
+fit = lm(SalePrice.log~GrLivArea.log + Neighborhood, data= train)
+summary(fit)
+
+fit = lm(SalePrice.log~GrLivArea.log + Neighborhood +OverallQual, data= train)
+summary(fit)
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+train_stepwise <- data.frame(   
+Neighborhood= as.factor(train$Neighborhood),
+Condition1= as.factor(train$Condition1),
+Condition2= as.factor(train$Condition2),
+BldgType= as.factor(train$BldgType),
+HouseStyle= as.factor(train$HouseStyle),
+OverallQual= train$OverallQual,
+OverallCond= train$OverallCond,
+YearBuilt= train$YearBuilt,
+YearRemodAdd= train$YearRemodAdd,
+RoofStyle= as.factor(train$RoofStyle),
+RoofMatl= as.factor(train$RoofMatl),
+Exterior1st= as.factor(train$Exterior1st),
+Exterior2nd= as.factor(train$Exterior2nd),
+MasVnrType= as.factor(train$MasVnrType),
+MasVnrArea= train$MasVnrArea,
+ExterQual= as.factor(train$ExterQual),
+ExterCond= as.factor(train$ExterCond),
+Foundation= as.factor(train$Foundation),
+BsmtQual= as.factor(train$BsmtQual),
+BsmtCond= as.factor(train$BsmtCond),
+TotalBsmtSF= train$TotalBsmtSF,
+Heating= as.factor(train$Heating),
+Electrical= as.factor(train$Electrical),
+X1stFlrSF= train$X1stFlrSF,
+GrLivArea= train$GrLivArea,
+BsmtFullBath= train$BsmtFullBath,
+BsmtHalfBath= train$BsmtHalfBath,
+FullBath= train$FullBath,
+HalfBath= train$HalfBath,
+BedroomAbvGr= train$BedroomAbvGr,
+KitchenQual= as.factor(train$KitchenQual),
+TotRmsAbvGrd= train$TotRmsAbvGrd,
+Fireplaces= train$Fireplaces,
+GarageType= as.factor(train$GarageType),
+WoodDeckSF= train$WoodDeckSF,
+YrSold= train$YrSold,
+SaleType= as.factor(train$SaleType),
+SaleCondition= as.factor(train$SaleCondition),
+SalePrice= train$SalePrice
+)
+fit = lm(SalePrice~., data = train_stepwise)
+p = ols_step_both_p(fit, prem = 0.05, pent = 0.05, details = TRUE)
+ols_step_backward_p(fit, prem = 0.05, details = TRUE)
+
+install.packages("olsrr", repos = "https://cran.microsoft.com/")
+library(olsrr)
+
+#plot of linear regression model
+bb <- train %>% ggplot(aes(x = GrLivArea, y=SalePrice)) + geom_point(aes(fill=Neighborhood),pch=21,size=3, alpha=.5)+
+  xlab("Living area 100 Sq Ft.")+
+  ylab("Sales Price")+
+  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
+    scale_y_continuous(label=comma)+
+  geom_smooth(method=lm, color="black")
+bb  + scale_color_brewer(palette = "GnBu")+ scale_fill_brewer(palette = "GnBu")
+```
