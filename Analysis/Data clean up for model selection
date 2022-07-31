@@ -69,3 +69,142 @@ fit = lm(SalePrice~., data = train_stepwise)
 p = ols_step_both_p(fit, prem = 0.05, details = TRUE)
 ols_step_backward_p(fit, prem = 0.05, details = TRUE)
 ols_step_forward_p(fit, prem = 0.05, details = TRUE)
+
+
+#boxplot of Sales Condition
+ggp <- ggplot(train, aes(SaleCondition, SalesPrice)) +    # Create default ggplot2 boxplot
+  geom_boxplot()
+
+fit = lm(SalePrice~., data = train_stepwise)
+
+fit = lm(SalePrice~GrLivArea, data= train)
+summary(fit)
+
+#model with raw data
+fit = lm(SalePrice~GrLivArea + Neighborhood, data= train)
+summary(fit)
+#model with logged data
+fit = lm(SalePrice.log~GrLivArea.log + Neighborhood, data= train)
+summary(fit)
+
+
+#graph with sepearate linear regression lines
+bb <- train %>% ggplot(aes(x = GrLivArea.log, y=SalePrice.log)) + geom_point(aes(fill=Neighborhood),pch=21,size=3, alpha=.5)+
+  xlab("Living area 100 Sq Ft.")+
+  ylab("Sales Price")+
+  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
+    scale_y_continuous(label=comma)+
+  geom_smooth(method=lm,se=FALSE,fullrange=TRUE,
+                  aes(color=Neighborhood))
+bb
+
+install.packages("olsrr", repos = "https://cran.microsoft.com/")
+
+fit = lm(SalePrice~GrLivArea + Neighborhood, data= train)
+k <- ols_prep_cdplot_data(fit)
+cooksd<-as.data.frame(ols_prep_outlier_obs(k))
+train$cooksd<-cooksd$cd
+train$cooksd_outlier<-cooksd$fct_color
+
+fit = lm(SalePrice.log~GrLivArea.log +OverallCond , data= train)
+k <- ols_prep_cdplot_data(fit)
+cooksd<-as.data.frame(ols_prep_outlier_obs(k))
+train$cooksd<-cooksd$cd
+
+
+library(olsrr)
+#residual plots
+ols_hadi(fit)
+ols_plot_hadi(fit, print_plot = TRUE)
+ols_plot_resid_fit(fit, print_plot = TRUE)
+
+ols_plot_cooksd_chart(fit, print_plot = TRUE)
+lev_outlier_res<-ols_plot_resid_lev(fit)
+train$lev_outlier_res<-lev_outlier_res[["data"]][["fct_color"]]
+
+ggplot(train, aes(x=as.factor(lev_outlier_res), fill=SaleCondition))+
+  geom_bar(aes( y=..count../tapply(..count.., ..x.. ,sum)[..x..]), position="stack" , width=0.5) +
+  geom_text(aes( y=..count../tapply(..count.., ..x.. ,sum)[..x..], label=scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..]) ),
+            stat="count", position=position_stack(0.9), vjust=0.5)+
+  xlab('Leverage and Outliers') +
+  ylab('Percent of SaleCondition')+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))+
+  theme(axis.text = element_text(size = 7))
+
+
+#cooksd graph
+bb <- train %>% ggplot(aes(x = GrLivArea, y=SalePrice)) + geom_point(aes(fill=lev_outlier_res),pch=21, alpha=1)+
+  xlab("Living area 100 Sq Ft.")+
+  ylab("Sales Price")+
+  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
+    scale_y_continuous(label=comma)+
+  geom_smooth(method=lm, color="black")
+bb  + scale_fill_manual(values = c("#6698FF", "#E95839"))
+
+fit = lm(SalePrice.log~GrLivArea.log +OverallCond , data= train)
+k <- ols_prep_cdplot_data(fit)
+cooksd<-as.data.frame(ols_prep_outlier_obs(k))
+train$cooksd<-cooksd$cd
+
+ols_plot_cooksd_chart(fit, print_plot = TRUE)
+
+
+#outlier and influence with logged data
+bb <- train %>% ggplot(aes(x = GrLivArea.log + OverallCond +KitchenQual.int, y=SalePrice.log)) + geom_point(aes(fill=lev_outlier_res),pch=21, alpha=1)+
+  xlab("Living area 100 Sq Ft.")+
+  ylab("Sales Price")+
+  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
+    scale_y_continuous(label=comma)+
+  geom_smooth(method=lm, color="black")
+bb # + scale_fill_manual(values = c("#6698FF", "#E95839"))
+
+
+fit = lm(SalePrice.log~GrLivArea.log + Neighborhood, data= train_stepwise)
+summary(fit)
+
+fit = lm(SalePrice.log~GrLivArea.log + Neighborhood + OverallQual + KitchenQual + HouseStyle, data= train)
+
+
+#plot of linear regression model
+bb <- train %>% ggplot(aes(x = GrLivArea.log, y=SalePrice)) + geom_point(aes(fill=Neghborhood_Qual_KitchenQual ,pch=21, size=3, alpha=.5))+
+  xlab("Living area 100 Sq Ft.")+
+  ylab("Sales Price")+
+  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
+    scale_y_continuous(label=comma)+
+  geom_smooth(method=lm, color="black")
+bb 
+```
+```{r Analysis 1}
+
+train$res <- resid(fit)
+
+myhist <- hist(train$res, main="Histogram of Residuals", xlab="Residuals", ylim=c(0, 300))
+multiplier <- myhist$counts / myhist$density
+mydensity <- density(train$res)
+mydensity$y <- mydensity$y * multiplier[1]
+
+myx <- seq(min(train$res), max(train$res), length.out= 100)
+mymean <- mean(train$res)
+mysd <- sd(train$res)
+
+normal <- dnorm(x = myx, mean = mymean, sd = mysd)
+lines(myx, normal * multiplier[1], col = "black", lwd = 2)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r Analysis 1}
+
+```
