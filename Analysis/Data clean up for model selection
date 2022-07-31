@@ -21,17 +21,24 @@ train = read.csv("./Data Files/train.csv") #read train.csv
 #GrLivArea: Above grade (ground) living area square feet
 
 train =train %>%filter(Neighborhood == "NAmes" | Neighborhood == "Edwards" | Neighborhood == "BrkSide" )
-train =train %>%filter(SaleCondition != "Partial" && SaleCondition !="Alloca")
+train =train %>%filter(SaleCondition != "Partial")
+train =train %>%filter(SaleCondition !="Alloca")
 train =train %>%filter(SaleCondition !="Abnorml")
+
 #updating categories to numerics
 train<-train %>% mutate(KitchenQual = case_when(KitchenQual == "TA" ~ 2, KitchenQual == "Gd" ~ 4, KitchenQual == "Fa" ~ 3, KitchenQual == "Ex" ~ 5, TRUE ~ 0 ))
-train<-train %>% mutate(ExterCond = case_when(ExterCond == "TA" ~ 2, ExterCond == "Gd" ~ 4, ExterCond == "Fa" ~ 3, ExterCond == "Ex" ~ 5, TRUE ~ 0))
+train<-train %>% mutate(BsmtQual = case_when(BsmtQual == "TA" ~ 2, ExterCond == "Gd" ~ 4, ExterCond == "Fa" ~ 3, BsmtQual == "Ex" ~ 5, TRUE ~ 0))
 train<-train %>% mutate(ExterCond = case_when(BsmtCond == "Po" ~ 2, BsmtCond == "TA" ~ 2, BsmtCond == "Gd" ~ 4, BsmtCond == "Fa" ~ 3, BsmtCond == "Ex" ~ 5, TRUE ~ 0))
 train<-train %>% mutate(ExterCond = case_when(ExterCond == "TA" ~ 2, ExterCond == "Gd" ~ 4, ExterCond == "Fa" ~ 3, ExterCond == "Ex" ~ 5, TRUE ~ 0))
 train<-train %>% mutate(HouseStyle = case_when(HouseStyle == "1.5Unf" ~ 1, HouseStyle == "1Story" ~ 1, HouseStyle == "1.5Fin" ~ 1, HouseStyle == "SLvl" ~ 1, HouseStyle == "2Story" ~ 2, HouseStyle == "2.5Unf" ~ 2, HouseStyle == "SFoyer" ~ 1, TRUE ~ 0 ))
-train<-train %>% mutate(BldgType = case_when(BldgType == "1Fam" ~ 2, TRUE ~ 1))
 
+#adding stone masonvnrarea
+train <- mutate(train, Stone.MasVnrArea = ifelse(MasVnrType=="Stone", MasVnrArea, 0))
+train <- mutate(train, MasVnrArea = ifelse(MasVnrType!="Stone", MasVnrArea, 0))
+
+train<-train %>% mutate(BldgType = case_when(BldgType == "1Fam" ~ 2, TRUE ~ 1))
 train$yearssincebuildrenv<-train$YrSold -pmax(train$YearBuilt, train$YearRemodAdd)
+
 #updating to per 100 sq feet
 train$GrLivArea=train$GrLivArea/100
 #creating logs
@@ -40,35 +47,21 @@ train$SalePrice.log=log(train$SalePrice)
 
 train_stepwise <- data.frame(   
 Neighborhood= as.factor(train$Neighborhood),
-Condition1= as.factor(train$Condition1),
-Condition2= as.factor(train$Condition2),
 BldgType= as.factor(train$BldgType),
 HouseStyle= as.factor(train$HouseStyle),
 OverallQual= train$OverallQual,
-OverallCond= train$OverallCond,
-YearBuilt= train$YearBuilt,
-YearRemodAdd= train$YearRemodAdd,
 RoofStyle= as.factor(train$RoofStyle),
 Exterior1st= as.factor(train$Exterior1st),
-Exterior2nd= as.factor(train$Exterior2nd),
-MasVnrType= as.factor(train$MasVnrType),
 MasVnrArea= train$MasVnrArea,
+StoneMas.VnrArea= train$Stone.MasVnrArea,
 ExterCond= train$ExterCond,
-BsmtQual= as.factor(train$BsmtQual),
-BsmtCond= train$BsmtCond,
 X1stFlrSF= train$X1stFlrSF,
 GrLivArea= train$GrLivArea,
-GrLivArea.log= train$GrLivArea.log,
-BsmtFullBath= train$BsmtFullBath,
-FullBath= train$FullBath,
-HalfBath= train$HalfBath,
-BedroomAbvGr= train$BedroomAbvGr,
+Baths= (train$FullBath+ (train$HalfBath*.5)),
 KitchenQual= train$KitchenQual,
 TotRmsAbvGrd= train$TotRmsAbvGrd,
 Fireplaces= train$Fireplaces,
-SaleCondition= as.factor(train$SaleCondition),
 SalePrice= train$SalePrice, 
-SalePrice.log= train$SalePrice.log, 
 yearssincebuildrenv=train$yearssincebuildrenv
 )
 
