@@ -1,22 +1,22 @@
 
 ## ks -ANALYSIS 1: estimate of how the SalePrice of the house is related to the square footage 
-- [ ] Restatement of Problem Build and Fit the Model Checking Assumptions
-	- [ ]  Residual Plots 
-	- [ ]  Influential point analysis (Cook’s D and Leverage) 
+- [x] Restatement of Problem Build and Fit the Model Checking Assumptions
+	- [x]  Residual Plots 
+	- [x]  Influential point analysis (Cook’s D and Leverage) 
 	- [ ]  Make sure to address each assumption. 
-	- [ ]  Comparing Competing Models 
-	- [ ]  Adj R2
+	- [x]  Comparing Competing Models 
+	- [x]  Adj R2
 	- [ ] Internal CV Press
-	
+	- [ ]  Conclusion: A short summary of the analysis.  
 ## vg-ANALYSIS 2: Build the most predictive model for sales prices of homes in all of Ames Iowa
-- [ ]  Model Selection
+- [x]  Model Selection
 - [ ]  Type of Selection (Stepwise, Forward, Backward, Custom)
-	- [ ]  Checking Assumptions 
-		- [ ]  Residual Plots
-		- [ ]  Influential point analysis (Cook’s D and Leverage)
-		- [ ]  Make sure to address each assumption
-	- [ ]  Comparing Competing Models
-		- [ ]  Adj R2   
+	- [x]  Checking Assumptions 
+		- [x]  Residual Plots
+		- [x]  Influential point analysis (Cook’s D and Leverage)
+		- [x]  Make sure to address each assumption
+	- [x]  Comparing Competing Models
+		- [x]  Adj R2   
 		- [ ]  Internal CV Press   
 		- [ ]  Kaggle Score 
 	- [ ]  Conclusion: A short summary of the analysis.  
@@ -27,7 +27,7 @@
 
 
 ## (both)Paper
-- [ ] Rough draft
+- [x] Rough draft
 
 https://smu365-my.sharepoint.com/:w:/g/personal/kendallscott_smu_edu/EdLcmKJDgj9LvvkbpSHj0BMBY618-mZtWWa6AN0LCurOhg
 
