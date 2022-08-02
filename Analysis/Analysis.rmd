@@ -1,3 +1,4 @@
+---
 title: "Analysis 1"
 output: html_document
 date: '2022-07-23'
@@ -8,7 +9,10 @@ date: '2022-07-23'
 library(ggplot2)
 library(dplyr)
 library(scales)
-
+library(tidyr)
+library(tidyverse)
+library(olsrr)
+library(caret)
 #set directory for desktop
 # setwd("/Users/apple/Desktop/Project 1/")
 
@@ -16,93 +20,91 @@ library(scales)
 #reading in the csvs
 test = read.csv("./Data Files/test.csv") #read test.csv
 train = read.csv("./Data Files/train.csv") #read train.csv
-#GrLivArea: Above grade (ground) living area square feet
-
-train =train %>%filter(Neighborhood == "NAmes" | Neighborhood == "Edwards" | Neighborhood == "BrkSide" )
-train =train %>%filter(SaleCondition != "Partial" )
 #updating to per 100 sq feet
 train$GrLivArea=train$GrLivArea/100
-
-
-fit = lm(SalePrice~GrLivArea, data= train)
-summary(fit)
-
+#creating logs
 train$GrLivArea.log=log(train$GrLivArea)
 train$SalePrice.log=log(train$SalePrice)
 
+    train =train %>%filter(Neighborhood == "NAmes" | Neighborhood == "Edwards" | Neighborhood == "BrkSide" )
+    train<-train %>% mutate(Neighborhood = 
+                              case_when(Neighborhood == "NAmes" ~ "North Ames", 
+                                        Neighborhood == "Edwards" ~ "Edwards",   
+                                        Neighborhood == "BrkSide" ~ "Brookside", 
+                                        TRUE ~ "Outside North Ames, Edwards, and Brookside" ))
 
-#graph with sepearate linear regression lines
-bb <- train %>% ggplot(aes(x = GrLivArea.log, y=SalePrice.log)) + geom_point(aes(fill=Neighborhood),pch=21,size=3, alpha=.5)+
-  xlab("Living area 100 Sq Ft.")+
-  ylab("Sales Price")+
-  ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
-    scale_y_continuous(label=comma)+
-  geom_smooth(method=lm,se=FALSE,fullrange=TRUE,
-                  aes(color=Neighborhood))
-bb
+train =train %>%filter(SaleType != "New")
+#checking assumptions
+hist(train$SalePrice,col="#41a3c9",main="Sale Price Distribution", xlab="Sale Price")
+hist(train$GrLivArea,col="#41a3c9",main="Living Area Distribution", xlab="Living Area")
 
+#model with raw data
+fit = lm(SalePrice~GrLivArea + Neighborhood, data= train)
+summary(fit)
+#model with logged data
 fit = lm(SalePrice.log~GrLivArea.log + Neighborhood, data= train)
 summary(fit)
 
-fit = lm(SalePrice.log~GrLivArea.log + Neighborhood +OverallQual, data= train)
-summary(fit)
-library(tidyr)
-library(dplyr)
-library(tidyverse)
-train_stepwise <- data.frame(   
-Neighborhood= as.factor(train$Neighborhood),
-Condition1= as.factor(train$Condition1),
-Condition2= as.factor(train$Condition2),
-BldgType= as.factor(train$BldgType),
-HouseStyle= as.factor(train$HouseStyle),
-OverallQual= train$OverallQual,
-OverallCond= train$OverallCond,
-YearBuilt= train$YearBuilt,
-YearRemodAdd= train$YearRemodAdd,
-RoofStyle= as.factor(train$RoofStyle),
-RoofMatl= as.factor(train$RoofMatl),
-Exterior1st= as.factor(train$Exterior1st),
-Exterior2nd= as.factor(train$Exterior2nd),
-MasVnrType= as.factor(train$MasVnrType),
-MasVnrArea= train$MasVnrArea,
-ExterQual= as.factor(train$ExterQual),
-ExterCond= as.factor(train$ExterCond),
-Foundation= as.factor(train$Foundation),
-BsmtQual= as.factor(train$BsmtQual),
-BsmtCond= as.factor(train$BsmtCond),
-TotalBsmtSF= train$TotalBsmtSF,
-Heating= as.factor(train$Heating),
-Electrical= as.factor(train$Electrical),
-X1stFlrSF= train$X1stFlrSF,
-GrLivArea= train$GrLivArea,
-BsmtFullBath= train$BsmtFullBath,
-BsmtHalfBath= train$BsmtHalfBath,
-FullBath= train$FullBath,
-HalfBath= train$HalfBath,
-BedroomAbvGr= train$BedroomAbvGr,
-KitchenQual= as.factor(train$KitchenQual),
-TotRmsAbvGrd= train$TotRmsAbvGrd,
-Fireplaces= train$Fireplaces,
-GarageType= as.factor(train$GarageType),
-WoodDeckSF= train$WoodDeckSF,
-YrSold= train$YrSold,
-SaleType= as.factor(train$SaleType),
-SaleCondition= as.factor(train$SaleCondition),
-SalePrice= train$SalePrice
-)
-fit = lm(SalePrice~., data = train_stepwise)
-p = ols_step_both_p(fit, prem = 0.05, pent = 0.05, details = TRUE)
-ols_step_backward_p(fit, prem = 0.05, details = TRUE)
+#outlier analysis
+lev_outlier_res<-ols_plot_resid_lev(fit)
+train$lev_outlier_res<-lev_outlier_res[["data"]][["fct_color"]]
 
-install.packages("olsrr", repos = "https://cran.microsoft.com/")
-library(olsrr)
+#outliers by sale type
+train %>% filter(lev_outlier_res == "outlier & leverage") %>%ggplot(aes(x=as.factor(lev_outlier_res), fill=SaleType))+
+  geom_bar(aes( y=..count../tapply(..count.., ..x.. ,sum)[..x..]), position="stack" , width=0.5) +
+  geom_text(aes( y=..count../tapply(..count.., ..x.. ,sum)[..x..], label=scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..]) ),
+            stat="count", position=position_stack(0.9), vjust=0.5)+
+  xlab('High Leverage and Outliers') +
+  ylab('Percent of SaleType')+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))+
+  theme(axis.text = element_text(size = 7))+
+ scale_fill_manual(values = c("#6698FF", "#E95839"))
 
-#plot of linear regression model
-bb <- train %>% ggplot(aes(x = GrLivArea, y=SalePrice)) + geom_point(aes(fill=Neighborhood),pch=21,size=3, alpha=.5)+
+#outliers by Sale Condition
+train %>% filter(lev_outlier_res == "outlier & leverage") %>%ggplot(aes(x=as.factor(lev_outlier_res), fill=SaleCondition))+
+  geom_bar(aes( y=..count../tapply(..count.., ..x.. ,sum)[..x..]), position="stack" , width=0.5) +
+  geom_text(aes( y=..count../tapply(..count.., ..x.. ,sum)[..x..], label=scales::percent(..count../tapply(..count.., ..x.. ,sum)[..x..]) ),
+            stat="count", position=position_stack(0.9), vjust=0.5)+
+  xlab('High Leverage and Outliers') +
+  ylab('Percent of Sale Condition')+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10))+
+  theme(axis.text = element_text(size = 7))+
+ scale_fill_manual(values = c("#6698FF", "#E95839"))
+
+#outlier and leverage graph
+bb <- train %>% ggplot(aes(x = GrLivArea.log, y=SalePrice.log)) + geom_point(aes(fill=lev_outlier_res),pch=21, alpha=1)+
   xlab("Living area 100 Sq Ft.")+
   ylab("Sales Price")+
   ggtitle("Sales Price vs. Sq. Footage of the Living Area ")+
     scale_y_continuous(label=comma)+
   geom_smooth(method=lm, color="black")
-bb  + scale_color_brewer(palette = "GnBu")+ scale_fill_brewer(palette = "GnBu")
+bb # + scale_fill_manual(values = c("#6698FF", "#E95839"))
+
+
+#residual plots
+k <- ols_prep_cdplot_data(fit)
+cooksd<-as.data.frame(ols_prep_outlier_obs(k))
+train$cooksd<-cooksd$cd
+ols_plot_cooksd_chart(fit, print_plot = TRUE)
+train$res <- resid(fit)
+
+myhist <- hist(train$res, main="Histogram of Residuals", xlab="Residuals", ylim=c(0, 300))
+multiplier <- myhist$counts / myhist$density
+mydensity <- density(train$res)
+mydensity$y <- mydensity$y * multiplier[1]
+
+myx <- seq(min(train$res), max(train$res), length.out= 100)
+mymean <- mean(train$res)
+mysd <- sd(train$res)
+
+normal <- dnorm(x = myx, mean = mymean, sd = mysd)
+lines(myx, normal * multiplier[1], col = "black", lwd = 2)
+
+#internal cv press
+ctrl <- trainControl(method = "LOOCV")
+#fit a regression model and use LOOCV to evaluate performance
+model <- train(SalePrice.log ~ GrLivArea.log + Neighborhood, data = train, method = "lm", trControl = ctrl)
+#view summary of LOOCV               
+print(model)
+
 ```
